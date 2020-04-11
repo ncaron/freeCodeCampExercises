@@ -6,9 +6,11 @@
  * Paste the result in appropriate folder in terminal
  */
 
+// Replace with file type
+const type = '';
 const limit = 10;
 const template =
-  'mkdir "{{TITLE}}" && touch "{{TITLE}}/index.js" && echo "// {{LINK}}" >> "{{TITLE}}/index.js"';
+  `mkdir "{{TITLE}}" && touch "{{TITLE}}/index.${type}" && echo "{{COMMENT}}" >> "{{TITLE}}/index.${type}"`;
 
 function copyToClipboard(text) {
   const tempTextArea = document.createElement('textarea');
@@ -40,6 +42,16 @@ function formatChallenges(challenges) {
   });
 }
 
+function getComment(link) {
+  if (type === 'html') {
+    return `<\\!-- ${link} -->`;
+  } else if (type === 'js') {
+    return `// ${link}`;
+  } else {
+    return '';
+  }
+}
+
 function start() {
   const commands = [];
   const challenges = getAllChallenges();
@@ -47,14 +59,15 @@ function start() {
 
   for (let i = 0; i < formattedChallenges.length; i++) {
     const currentChallenge = formattedChallenges[i];
+    const comment = getComment(currentChallenge.link);
     const command = template
       .replace(/{{TITLE}}/g, currentChallenge.title)
-      .replace(/{{LINK}}/g, currentChallenge.link);
+      .replace(/{{COMMENT}}/g, comment);
 
     commands.push(command);
   }
 
-  const commandString = commands.join(' &&');
+  const commandString = commands.join(' && ');
 
   copyToClipboard(commandString);
 }
