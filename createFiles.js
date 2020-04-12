@@ -71,3 +71,5 @@ function start() {
 
   copyToClipboard(commandString);
 }
+
+start();
